@@ -18,7 +18,7 @@ datastep:
     RUN
 ;
 
-data_stmnt: DATA dotted_identifier '/' datastep_options ';';
+data_stmnt: DATA dotted_identifier ('/' datastep_options)? ';';
 datastep_options: VIEW '=' Identifier;
 set_stmnt: SET (dotted_identifier datastep_dataset_options?)+ ';';
 merge_stmnt: MERGE (dotted_identifier datastep_dataset_options?)+ ';';
