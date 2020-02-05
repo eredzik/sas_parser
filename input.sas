@@ -5,7 +5,7 @@ where a.b = c.d
 ;quit;
 
 
-data x;
+data x / view=x;
 set lala.abc;
 run;
 
@@ -15,7 +15,7 @@ from abc.x, bda.y, zgod.z
 ;quit;
 
 data &intable;
-set %dbmssel(table) &abacas..bdabd(where = (abc = 2 ) rename = (ABC = DEF) in=abc);
+set %dbm_ssel(table) &abacas..bdabd(where = (abc = 2 ) rename = (ABC = DEF) in=abc);
 run;
 
 %macro dbmssel(tab1);

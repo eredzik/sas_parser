@@ -18,9 +18,11 @@ datastep:
     RUN
 ;
 
-data_stmnt: DATA dotted_identifier ';';
+data_stmnt: DATA dotted_identifier '/' datastep_options ';';
+datastep_options: VIEW '=' Identifier;
 set_stmnt: SET (dotted_identifier datastep_dataset_options?)+ ';';
 merge_stmnt: MERGE (dotted_identifier datastep_dataset_options?)+ ';';
+
 
 
 datastep_dataset_options:
@@ -115,6 +117,7 @@ LOGICAL_OP: AND | OR;
 Macro_begin: '%' M A C R O;
 Macro_end: '%' M E N D;
 Macro_let: '%' L E T;
+VIEW: V I E W;
 SELECT: S E L E C T;
 FROM: F R O M;
 AS: A S;
@@ -182,7 +185,7 @@ fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
 WS : [ \t\r\n]+ -> skip ;
-Identifier : [a-zA-Z] [a-zA-Z0-9]*;
+Identifier : [a-zA-Z_] [a-zA-Z0-9_]*;
 COMMENT1: '/' '*' .*? '*' '/' -> channel(2);
 COMMENT2: '%' '*' .*? ';' -> channel(2);
 
