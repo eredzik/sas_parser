@@ -51,11 +51,15 @@ datastep_math_col: macro_identifier | CONST;
 
 procsql:
     procsql_stmnt
-    select_stmnt
+    (select_stmnt
     from_stmnt
     where_stmnt?
     groupby_stmnt?
-    having_stmnt?
+    having_stmnt?)?
+    (update_stmnt
+     setsql_stmnt?
+     where_stmnt?
+    )?
     ';'
     QUIT
 ;
@@ -68,6 +72,13 @@ select_stmnt:
     SELECT sqlcolumns
 ;
 
+update_stmnt:
+    UPDATE TABLE sqltable
+;
+
+setsql_stmnt:
+    SET sqlcolumns
+;
 
 sqlcolumns: (sql_math sqlalias?) (',' (sql_math sqlalias?))*;
 sqlcol_prefix: (macro_identifier '.' )*(macro_identifier | STAR);
@@ -133,6 +144,8 @@ DATA: D A T A;
 SET: S E T;
 MERGE: M E R G E;
 RENAME: R E N A M E ;
+UPDATE: U P D A T E ;
+TABLE: T A B L E ;
 IN: I N;
 SINGLE_Q: '\'';
 DOUBLE_Q: '"';

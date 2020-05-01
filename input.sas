@@ -24,3 +24,13 @@ run;
     run; 
     
 %mend dbmssel; 
+
+
+%macro abc(ab=1);
+proc sql;
+update table abc
+set x=1, b=2
+where abd=6
+;quit;
+
+%mend;
