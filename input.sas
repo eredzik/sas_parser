@@ -10,12 +10,14 @@ set lala.abc;
 run;
 
 proc sql;
-select *
+select abc.g, zgod.bds
 from abc.x, bda.y, zgod.z
+left join abc.sdff
+on t1.adg = t2.bdgf
 ;quit;
 
 data &intable;
-set %dbm_ssel(table) &abacas..bdabd(where = (abc = 2 ) rename = (ABC = DEF) in=abc);
+set %dbm_ssel(table1) &abacas..bdabd(where = (abc = 2 ) rename = (ABC = DEF) in=abc);
 run;
 
 %macro dbmssel(tab1);
@@ -34,3 +36,7 @@ where abd=6
 ;quit;
 
 %mend;
+
+proc append data=abcd base=zz;
+run;
+

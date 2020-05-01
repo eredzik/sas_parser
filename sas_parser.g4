@@ -6,7 +6,16 @@ parse:
     (datastep
     | procsql
     | macro_declaration
-    | let_stmnt )*
+    | let_stmnt 
+    | procappend)*
+;
+
+
+procappend:
+    PROC APPEND
+    (DATA '=' macro_identifier)? |
+    ((OUT | BASE)'=' macro_identifier)? ';'
+    RUN 
 ;
 
 datastep:
@@ -30,7 +39,6 @@ datastep_dataset_options:
       (datastep_where
     | datastep_rename
     | datastep_in)*
-    
     ')'
 ;
 datastep_where:
@@ -49,58 +57,51 @@ datastep_math:
 ;
 datastep_math_col: macro_identifier | CONST;
 
+
 procsql:
     procsql_stmnt
-    (select_stmnt
+    (sqlselect_stmnt | sqlupdate_stmnt)
+    
+    (QUIT | RUN)
+;
+
+procsql_stmnt: PROC SQL NOPRINT? ';' ;
+select_stmnt: SELECT sqlcolumns;
+sqlselect_stmnt:
+    select_stmnt
     from_stmnt
+    join_stmnt?
     where_stmnt?
     groupby_stmnt?
-    having_stmnt?)?
-    (update_stmnt
-     setsql_stmnt?
-     where_stmnt?
-    )?
+    having_stmnt?
+    ';';
+
+from_stmnt: FROM sqltables;
+join_stmnt: (LEFT | RIGHT)? JOIN sqltable ON sql_math;
+where_stmnt: WHERE sql_math;
+groupby_stmnt: GROUPBY sqlcolumns;
+having_stmnt: HAVING sql_math;
+
+sqlupdate_stmnt: 
+    update_stmnt
+    setsql_stmnt?
+    where_stmnt?
     ';'
-    QUIT
-;
-procsql_stmnt:
-    PROC SQL NOPRINT? ';'
     
 ;
+update_stmnt: UPDATE TABLE sqltable;
+setsql_stmnt: SET sqlcolumns;
 
-select_stmnt:
-    SELECT sqlcolumns
-;
-
-update_stmnt:
-    UPDATE TABLE sqltable
-;
-
-setsql_stmnt:
-    SET sqlcolumns
-;
+sql_col_macro: (sqlcol_prefix | CONST | macrocall | ('(' sqlselect_stmnt ')'));
+sql_math: (sql_col_macro (operators sql_col_macro)*) ;
 
 sqlcolumns: (sql_math sqlalias?) (',' (sql_math sqlalias?))*;
-sqlcol_prefix: (macro_identifier '.' )*(macro_identifier | STAR);
-
-from_stmnt:
-    FROM sqltables
-;
+sqlcol_prefix: (macro_identifier '.' )?(macro_identifier | STAR);
 
 sqltables: sqltable (',' sqltable)*;
 sqltable: dotted_identifier sqlalias?;
 sqlalias: (AS? macro_identifier) ;
-where_stmnt:
-    WHERE sql_math
-;
 
-sql_math: ((sqlcol_prefix | CONST ) (operators (sqlcol_prefix | CONST ))*)*;
-groupby_stmnt:
-    GROUPBY sqlcolumns
-;
-having_stmnt:
-    HAVING sql_math
-;
 
 dotted_identifier:
     ((Identifier | macrocall | Macrovar) '.')? 
@@ -110,20 +111,30 @@ dotted_identifier:
 macro_identifier: 
     (Identifier | macrocall | Macrovar);
 
-Macrovar: '&' Identifier '.'?;
-functioncall : macro_identifier ( '(' arguments ')')?;
-macrocall: '%' functioncall;
-arguments: (macro_identifier (',' macro_identifier)* (',' macro_identifier '=' macro_identifier?)*)* ;
 macro_declaration: 
-    Macro_begin macro_identifier 
-    ('(' arguments ')')? ';'
+    Macro_begin functioncall';'
     parse
     Macro_end macro_identifier? ';'
 ;
-operators: not_op? (MATH_OP | LOGICAL_OP | COMPARISON_OP | '=') ; 
+
+macrocall: '%' functioncall;
+functioncall : macro_identifier ('(' funcargs ')')? ;
+funcargs:
+    macro_identifier? (',' macro_identifier)*
+    (','? macro_identifier '=' (macro_identifier | CONST))* 
+    
+;
+    // (macro_identifier (',' macro_identifier)* (',' kwarg)*) |
+    // kwarg (',' kwarg)* 
+// ;
+// kwarg: macro_identifier '=' (macro_identifier | CONST )?;
+
+
+Macrovar: '&' Identifier '.'?;
+operators: NOT_OP? (STAR | MATH_OP | LOGICAL_OP | COMPARISON_OP | '=') ; 
 let_stmnt: Macro_let macro_identifier '=' macro_identifier ';';
 STAR: '*';
-MATH_OP: STAR | '/' | '+' | '-' | '**';
+MATH_OP: '/' | '+' | '-' | '**';
 LOGICAL_OP: AND | OR;
 Macro_begin: '%' M A C R O;
 Macro_end: '%' M E N D;
@@ -132,6 +143,10 @@ VIEW: V I E W;
 SELECT: S E L E C T;
 FROM: F R O M;
 AS: A S;
+LEFT: L E F T;
+RIGHT: R I G H T;
+JOIN: J O I N;
+ON: O N;
 WHERE: W H E R E;
 GROUPBY: G R O U P B Y;
 HAVING: H A V I N G;
@@ -146,14 +161,17 @@ MERGE: M E R G E;
 RENAME: R E N A M E ;
 UPDATE: U P D A T E ;
 TABLE: T A B L E ;
+APPEND: A P P E N D ;
+OUT: O U T ;
+BASE: B A S E ;
 IN: I N;
 SINGLE_Q: '\'';
 DOUBLE_Q: '"';
 CHAR_LITERAL: ANY_Q .+? ANY_Q; 
 ANY_Q: SINGLE_Q | DOUBLE_Q;
 CONST: CHAR_LITERAL | NUM_LITERAL;
-NUM_LITERAL: [0-9] ('.')?  ([0-9])* ;
-not_op: '^' | 'not';
+NUM_LITERAL: [0-9]+ ('.')?  ([0-9])* ;
+NOT_OP: '^' | 'not';
 COMPARISON_OP: 
     '>'
     |'<'
