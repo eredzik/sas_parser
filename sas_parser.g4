@@ -7,14 +7,15 @@ parse:
     | procsql
     | macro_declaration
     | let_stmnt 
-    | procappend)*
+    | procappend
+    | macrocall)*
 ;
 
 
 procappend:
     PROC APPEND
-    (DATA '=' macro_identifier)? |
-    ((OUT | BASE)'=' macro_identifier)? ';'
+    procappend_dsets*
+    ';'
     RUN 
 ;
 
@@ -27,11 +28,11 @@ datastep:
     RUN
 ;
 
-data_stmnt: DATA dotted_identifier ('/' datastep_options)? ';';
+data_stmnt: DATA datastep_dset ('/' datastep_options)? ';';
 datastep_options: VIEW '=' Identifier;
-set_stmnt: SET (dotted_identifier datastep_dataset_options?)+ ';';
+set_stmnt: SET (datastep_dset datastep_dataset_options?)+ ';';
 merge_stmnt: MERGE (dotted_identifier datastep_dataset_options?)+ ';';
-
+datastep_dset: dotted_identifier; 
 
 
 datastep_dataset_options:
@@ -65,18 +66,22 @@ procsql:
     (QUIT | RUN)
 ;
 
-procsql_stmnt: PROC SQL NOPRINT? ';' ;
-select_stmnt: SELECT sqlcolumns;
 sqlselect_stmnt:
+    create_stmnt?
     select_stmnt
     from_stmnt
-    join_stmnt?
+    join_stmnt*
     where_stmnt?
     groupby_stmnt?
     having_stmnt?
     ';';
 
-from_stmnt: FROM sqltables;
+
+
+procsql_stmnt: PROC SQL NOPRINT? ';' ;
+create_stmnt: CREATE (TABLE | VIEW) sqltable AS;
+select_stmnt: SELECT sqlcolumns;
+from_stmnt: FROM sqltable (',' sqltable)*;
 join_stmnt: (LEFT | RIGHT)? JOIN sqltable ON sql_math;
 where_stmnt: WHERE sql_math;
 groupby_stmnt: GROUPBY sqlcolumns;
@@ -98,7 +103,6 @@ sql_math: (sql_col_macro (operators sql_col_macro)*) ;
 sqlcolumns: (sql_math sqlalias?) (',' (sql_math sqlalias?))*;
 sqlcol_prefix: (macro_identifier '.' )?(macro_identifier | STAR);
 
-sqltables: sqltable (',' sqltable)*;
 sqltable: dotted_identifier sqlalias?;
 sqlalias: (AS? macro_identifier) ;
 
@@ -118,17 +122,19 @@ macro_declaration:
 ;
 
 macrocall: '%' functioncall;
-functioncall : macro_identifier ('(' funcargs ')')? ;
+functioncall : macro_identifier ('(' funcargs ')')? ';'?;
 funcargs:
     macro_identifier? (',' macro_identifier)*
     (','? macro_identifier '=' (macro_identifier | CONST))* 
     
 ;
-    // (macro_identifier (',' macro_identifier)* (',' kwarg)*) |
-    // kwarg (',' kwarg)* 
-// ;
-// kwarg: macro_identifier '=' (macro_identifier | CONST )?;
+procappend_dsets:
+    (appendinput | appendoutput)
+     
+;
 
+appendoutput: (OUT | BASE ) '=' macro_identifier;
+appendinput: DATA  '=' macro_identifier;
 
 Macrovar: '&' Identifier '.'?;
 operators: NOT_OP? (STAR | MATH_OP | LOGICAL_OP | COMPARISON_OP | '=') ; 
@@ -140,6 +146,7 @@ Macro_begin: '%' M A C R O;
 Macro_end: '%' M E N D;
 Macro_let: '%' L E T;
 VIEW: V I E W;
+CREATE: C R E A T E;
 SELECT: S E L E C T;
 FROM: F R O M;
 AS: A S;

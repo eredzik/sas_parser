@@ -3,21 +3,20 @@ proc sql noprint;
 select *, 1*2 as bb from sth, abc b
 where a.b = c.d
 ;quit;
-
-
 data x / view=x;
 set lala.abc;
 run;
 
 proc sql;
+create table tabledot as 
 select abc.g, zgod.bds
-from abc.x, bda.y, zgod.z
+from abc.x, bda.y, zgod.z bn
 left join abc.sdff
 on t1.adg = t2.bdgf
 ;quit;
 
 data &intable;
-set %dbm_ssel(table1) &abacas..bdabd(where = (abc = 2 ) rename = (ABC = DEF) in=abc);
+set %macr(table1) &abacas..bdabd(where = (abc = 2 ) rename = (ABC = DEF) in=abc);
 run;
 
 %macro dbmssel(tab1);
@@ -30,13 +29,14 @@ run;
 
 %macro abc(ab=1);
 proc sql;
-update table abc
+update table &zccs
 set x=1, b=2
 where abd=6
 ;quit;
 
 %mend;
+%abc(def=2);
 
-proc append data=abcd base=zz;
+proc append data=abcdgda base=zz;
 run;
 

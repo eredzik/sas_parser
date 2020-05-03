@@ -1,2 +1,4 @@
 .antlr/
 .vscode/
+tmp/
+__pycache__/
