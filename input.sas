@@ -1,4 +1,4 @@
-%let abc = %incudesectparm(abd, default=%stgg(gdaga));
+%let abc = %incudesectparm(abd, default=%stgg(gdaga.baga));
 proc sql noprint;
 select *, 1*2 as bb from sth, abc b
 where a.b = c.d
@@ -35,8 +35,16 @@ where abd=6
 ;quit;
 
 %mend;
-%abc(def=2);
+%abc(def=22);
 
-proc append data=abcdgda base=zz;
+proc append data=gda.abcdgda base=zz;
 run;
 
+%let a=b;;
+data x;
+x=1;
+do i=1 to 12;
+    a=2;
+    g=12;
+end;
+run;
