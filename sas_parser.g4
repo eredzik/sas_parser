@@ -14,7 +14,10 @@ parse:
     ) ';'?)*
 ;
 
-macrocall: '%' macro_identifier ('(' funcargs ')')? ';'?;
+macrocall: '%' macro_identifier ('(' 
+    dotted_identifier*? (',' (dotted_identifier| macrocall)*)*
+    (','? macro_identifier '=' (dotted_identifier | CONST | macrocall)*?)* 
+ ')')? ';'?;
 functioncall : macro_identifier ('(' funcargs ')') ;
 funcargs:
     dotted_identifier? (',' (dotted_identifier| macrocall))*

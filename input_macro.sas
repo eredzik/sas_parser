@@ -10,4 +10,4 @@ run;
 
 %mend abc;
 
-%abc(gdga);
+%abc(gdga gda gdagda);
