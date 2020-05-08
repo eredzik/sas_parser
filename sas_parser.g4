@@ -38,9 +38,8 @@ procappend:
 
 
 procsort:
-    PROC SORT
-    procsort_dsets*
-    ';'
+    PROC SORT procsort_dsets* NODUPKEY?';'
+    BY macro_identifier* ';'
     RUN 
 ;
 
@@ -185,8 +184,9 @@ Macro_end ';'
 
 
 procappend_dsets: (proc_base | proc_out | proc_data);
-procsort_dsets: (proc_in | proc_out | proc_data);
+procsort_dsets: (proc_in | proc_out | proc_data | proc_dupout);
 
+proc_dupout: DUPOUT '=' dotted_identifier;
 proc_in: IN '=' dotted_identifier;
 proc_base: BASE '=' dotted_identifier;
 proc_out: OUT '=' dotted_identifier;
@@ -249,6 +249,8 @@ SORT: S O R T;
 OUT: O U T ;
 BASE: B A S E ;
 IN: I N;
+DUPOUT: D U P O U T;
+NODUPKEY: N O D U P K E Y;
 SINGLE_Q: '\'';
 DOUBLE_Q: '"';
 CONST: CHAR_LITERAL | NUM_LITERAL;
