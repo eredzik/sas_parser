@@ -47,4 +47,9 @@ do i=1 to 12;
     a=2;
     g=12;
 end;
+if a=b then a=z;
+if a=b then do;
+    a=b;
+end;
+
 run;

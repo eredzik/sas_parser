@@ -6,6 +6,7 @@ parse:
     ((datastep
     | procsql
     | macro_declaration
+    | macro_do
     | let_stmnt 
     | put_stmnt
     | procappend
@@ -13,6 +14,12 @@ parse:
     ) ';'?)*
 ;
 
+macrocall: '%' macro_identifier ('(' funcargs ')')? ';'?;
+functioncall : macro_identifier ('(' funcargs ')') ;
+funcargs:
+    dotted_identifier? (',' (dotted_identifier| macrocall))*
+    (','? macro_identifier '=' (dotted_identifier | CONST | macrocall)?)* 
+;
 
 procappend:
     PROC APPEND
@@ -31,17 +38,24 @@ data_stmnt: DATA datastep_dset ('/' datastep_options)? ';';
 datastep_options: VIEW '=' Identifier;
 ds_set: SET (datastep_dset datastep_dataset_options?)+ ';';
 ds_merge: MERGE (dotted_identifier datastep_dataset_options?)+ ';';
-ds_assign: Identifier '=' (functioncall | datastep_math)  ;
-ds_stmnts: (ds_if | ds_set | ds_merge | ds_do_block | (ds_assign ';'))*;
-ds_if: IF datastep_math THEN (ds_stmnts) ;
+ds_assign: 
+    Identifier '=' (
+    datastep_math | 
+    macro_identifier | 
+    functioncall |
+    macrocall
+    ) ';';
+ds_stmnts: (ds_assign | ds_if_then_stmnt | ds_set | ds_merge | ds_do_block |macrocall)*;
+ds_if_then_stmnt: IF datastep_math THEN (ds_assign | ds_if_then_stmnt | ds_set | ds_merge | ds_do_block |macrocall) ;
 ds_do_block: 
 DO 
 (
-    (ds_assign TO CONST (BY CONST)? ';')|
-    ((WHILE | UNTIL) '(' datastep_math ')' ';')
-    
-) ds_stmnts
-END
+    (
+      (Identifier) '=' (datastep_math) TO CONST (BY CONST)?)
+    | ((WHILE | UNTIL) '(' datastep_math ')' )
+)? ';'
+ (ds_assign | ds_if_then_stmnt | ds_set | ds_merge | ds_do_block |macrocall)*
+END ';'
 ;
 
 
@@ -129,18 +143,21 @@ macro_identifier:
     (Identifier | macrocall | Macrovar);
 
 macro_declaration: 
-    Macro_begin functioncall';'
+    Macro_begin macro_identifier ('(' funcargs ')')? ';'?';'
     parse
-    Macro_end macro_identifier? ';'
+    Macro_mend macro_identifier? ';'
+;
+
+macro_do:
+Macro_do
+    (Identifier '=' (macro_identifier | CONST) Macro_to macro_identifier)?
+    
+';'
+parse
+Macro_end ';'
 ;
 
 
-macrocall: '%' functioncall;
-functioncall : macro_identifier ('(' funcargs ')')? ;
-funcargs:
-    dotted_identifier? (',' dotted_identifier)*
-    (','? macro_identifier '=' (dotted_identifier | CONST))* 
-;
 procappend_dsets:
     (appendinput | appendoutput)
      
@@ -157,10 +174,15 @@ STAR: '*';
 MATH_OP: '/' | '+' | '-' | '**';
 LOGICAL_OP: AND | OR;
 Macrovar: '&' Identifier '.'?;
-Macro_begin: '%' M A C R O;
-Macro_end: '%' M E N D;
+Macro_begin: '%' M A C R O ' ';
+Macro_mend: '%' M E N D;
 Macro_let: '%' L E T;
 Macro_put: '%' P U T;
+Macro_do: '%' D O;
+Macro_to: '%' T O;
+Macro_end: '%' E N D;
+Macro_if: '%' I F;
+Macro_then: '%' T H E N;
 VIEW: V I E W;
 CREATE: C R E A T E;
 SELECT: S E L E C T;
@@ -190,7 +212,7 @@ TO: T O;
 BY: B Y;
 WHILE: W H I L E ;
 UNTIL: U N T I L ;
-END: E N D ';';
+END: E N D;
 TABLE: T A B L E ;
 APPEND: A P P E N D ;
 OUT: O U T ;
@@ -198,10 +220,10 @@ BASE: B A S E ;
 IN: I N;
 SINGLE_Q: '\'';
 DOUBLE_Q: '"';
+CONST: CHAR_LITERAL | NUM_LITERAL;
 CHAR_LITERAL: ANY_Q .+? ANY_Q; 
 ANY_Q: SINGLE_Q | DOUBLE_Q;
-CONST: CHAR_LITERAL | NUM_LITERAL;
-NUM_LITERAL: [0-9]+ ('.' [0-9])* ;
+NUM_LITERAL: [0-9]+ ('.' [0-9]+)* ;
 NOT_OP: '^' | 'not';
 COMPARISON_OP: 
     '>'

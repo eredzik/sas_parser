@@ -13,11 +13,12 @@
             "type": "antlr-debug",
             "request": "launch",
             //"input": "${workspaceFolder}/${command:AskForTestInput}",
-            "input": "input.sas",
+            "input": "input_macro.sas",
             "grammar": "sas_parser.g4",
             "startRule": "parse",
             "printParseTree": true,
             "visualParseTree": true
+            // "visualParseTree": false
         }
     ]
 }
