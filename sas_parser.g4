@@ -185,7 +185,7 @@ Macro_end ';'
 
 
 procappend_dsets: (proc_base | proc_out | proc_data);
-procsort_dsets: (proc_in | proc_out);
+procsort_dsets: (proc_in | proc_out | proc_data);
 
 proc_in: IN '=' dotted_identifier;
 proc_base: BASE '=' dotted_identifier;
