@@ -13,6 +13,7 @@ parse:
     | let_stmnt 
     | put_stmnt
     | procappend
+    | procsort
     | macrocall
     ) ';'?)*
 ;
@@ -31,6 +32,14 @@ funcargs:
 procappend:
     PROC APPEND
     procappend_dsets*
+    ';'
+    RUN 
+;
+
+
+procsort:
+    PROC SORT
+    procsort_dsets*
     ';'
     RUN 
 ;
@@ -151,7 +160,7 @@ dotted_identifier:
 macro_identifier: 
     (Identifier | macrocall | Macrovar);
 macro_string:
-    (macro_identifier | '.' | '&' | '(' | ')' | CONST | '=' | ':');
+    (macro_identifier | '.' | '&' | '(' | ')' | CONST | '=' | ':' | '/' | '\\' | '$' | '!');
 macro_declaration: 
     Macro_begin macro_identifier ('(' funcargs ')')? ';'?';'
     parse
@@ -175,13 +184,13 @@ Macro_end ';'
 ;
 
 
-procappend_dsets:
-    (appendinput | appendoutput)
-     
-;
+procappend_dsets: (proc_base | proc_out | proc_data);
+procsort_dsets: (proc_in | proc_out);
 
-appendoutput: (OUT | BASE ) '=' dotted_identifier;
-appendinput: DATA  '=' dotted_identifier;
+proc_in: IN '=' dotted_identifier;
+proc_base: BASE '=' dotted_identifier;
+proc_out: OUT '=' dotted_identifier;
+proc_data: DATA  '=' dotted_identifier;
 
 operators: NOT_OP? (STAR | MATH_OP | LOGICAL_OP | COMPARISON_OP | '=') ; 
 let_stmnt: Macro_let macro_identifier '=' macro_string* ';';
@@ -236,6 +245,7 @@ UNTIL: U N T I L ;
 END: E N D;
 TABLE: T A B L E ;
 APPEND: A P P E N D ;
+SORT: S O R T;
 OUT: O U T ;
 BASE: B A S E ;
 IN: I N;
