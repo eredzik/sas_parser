@@ -7,6 +7,9 @@ parse:
     | procsql
     | macro_declaration
     | macro_do
+    | macro_if
+    | macro_global
+    | macro_local
     | let_stmnt 
     | put_stmnt
     | procappend
@@ -15,9 +18,10 @@ parse:
 ;
 
 macrocall: '%' macro_identifier ('(' 
-    dotted_identifier*? (',' (dotted_identifier| macrocall)*)*
-    (','? macro_identifier '=' (dotted_identifier | CONST | macrocall)*?)* 
- ')')? ';'?;
+    (macro_string)* (',' (macro_string)*)*
+    (','? macro_identifier '=' (macro_string)*?)* 
+ ')')?
+ ';'?;
 functioncall : macro_identifier ('(' funcargs ')') ;
 funcargs:
     dotted_identifier? (',' (dotted_identifier| macrocall))*
@@ -86,6 +90,7 @@ datastep_in:
 datastep_math:
     datastep_math_col (operators (datastep_math_col))*
 ;
+
 datastep_math_col: macro_identifier | CONST;
 
 
@@ -142,13 +147,22 @@ dotted_identifier:
     (Identifier | macrocall | Macrovar)
     ;
 
+
 macro_identifier: 
     (Identifier | macrocall | Macrovar);
-
+macro_string:
+    (macro_identifier | '.' | '&' | '(' | ')' | CONST | '=' | ':');
 macro_declaration: 
     Macro_begin macro_identifier ('(' funcargs ')')? ';'?';'
     parse
     Macro_mend macro_identifier? ';'
+;
+
+macro_global: Macro_global macro_identifier+ ';' ;
+macro_local: Macro_local macro_identifier+ ';' ;
+macro_if:
+Macro_if datastep_math Macro_then (let_stmnt | put_stmnt | macro_do)
+(Macro_else (let_stmnt | put_stmnt | macro_do))*
 ;
 
 macro_do:
@@ -170,9 +184,10 @@ appendoutput: (OUT | BASE ) '=' dotted_identifier;
 appendinput: DATA  '=' dotted_identifier;
 
 operators: NOT_OP? (STAR | MATH_OP | LOGICAL_OP | COMPARISON_OP | '=') ; 
-let_stmnt: Macro_let macro_identifier '=' macro_identifier ';';
-put_stmnt: Macro_put .*? ';';
+let_stmnt: Macro_let macro_identifier '=' macro_string* ';';
+put_stmnt: Macro_put macro_string* ';';
 
+COLON: ':';
 STAR: '*';
 MATH_OP: '/' | '+' | '-' | '**';
 LOGICAL_OP: AND | OR;
@@ -185,6 +200,9 @@ Macro_do: '%' D O;
 Macro_to: '%' T O;
 Macro_end: '%' E N D;
 Macro_if: '%' I F;
+Macro_else: '%' E L S E;
+Macro_global: '%' G L O B A L ' ';
+Macro_local: '%' L O C A L ' ';
 Macro_then: '%' T H E N;
 VIEW: V I E W;
 CREATE: C R E A T E;

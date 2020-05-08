@@ -1,13 +1,13 @@
 data x;
-/* assignment_const_num = 25432.55353; */
-/* assignment_const_char = 'CHARSTH'; */
-/* assignment_const_char2 = "GAGA"; */
-/* assignment_var2 =  assign1;
+assignment_const_num = 25432.55353;
+assignment_const_char = 'CHARSTH';
+assignment_const_char2 = "GAGA";
+assignment_var2 =  assign1;
 do i=1 to 12;
     a=2;
     g=12;
 end;
-if a=b then a=z; */
+if a=b then a=z;
 if a=b then do;
     dasdsadb=ddadada;
 end;
