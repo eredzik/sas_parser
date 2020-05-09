@@ -23,7 +23,14 @@ macrocall: '%' macro_identifier ('('
     (','? macro_identifier '=' (macro_string)*?)* 
  ')')?
  ';'?;
+functioncallsql  :macro_identifier ('(' (funcargssql ) ')') ;
+
+funcargssql:
+    (dotted_identifier | STAR | functioncallsql | macrocall | CONST)? (',' (dotted_identifier | STAR | functioncallsql | macrocall | CONST))*
+    (','? macro_identifier '=' (dotted_identifier | STAR | functioncallsql | macrocall | CONST)?)* 
+;
 functioncall : macro_identifier ('(' funcargs ')') ;
+
 funcargs:
     dotted_identifier? (',' (dotted_identifier| macrocall))*
     (','? macro_identifier '=' (dotted_identifier | CONST | macrocall)?)* 
@@ -140,7 +147,7 @@ sqlupdate_stmnt:
 update_stmnt: UPDATE TABLE sqltable;
 setsql_stmnt: SET sqlcolumns;
 
-sql_col_macro: (sqlcol_prefix | CONST | macrocall | ('(' sqlselect_stmnt ')'));
+sql_col_macro: (sqlcol_prefix | CONST | macrocall | functioncallsql | ('(' sqlselect_stmnt ')'));
 sql_math: (sql_col_macro (operators sql_col_macro)*) ;
 
 sqlcolumns: (sql_math sqlalias?) (',' (sql_math sqlalias?))*;
