@@ -14,9 +14,18 @@ parse:
     | put_stmnt
     | procappend
     | procsort
+    | include_stmnt
+    | libname_stmnt
     | macrocall
     ) ';'?)*
 ;
+
+libname_stmnt: LIBNAME macro_identifier 
+    (('(' macro_identifier ')') |
+     (CONST)
+    )
+    ';';
+include_stmnt: INCLUDE (CONST | macro_identifier) ( '/' SOURCE2)?';';
 
 macrocall: '%' macro_identifier ('(' 
     (macro_string)* (',' (macro_string)*)*
@@ -258,6 +267,9 @@ BASE: B A S E ;
 IN: I N;
 DUPOUT: D U P O U T;
 NODUPKEY: N O D U P K E Y;
+INCLUDE: '%' I N C L U D E;
+LIBNAME: L I B N A M E;
+SOURCE2: S O U R C E '2';
 SINGLE_Q: '\'';
 DOUBLE_Q: '"';
 CONST: CHAR_LITERAL | NUM_LITERAL;
