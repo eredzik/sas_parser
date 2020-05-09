@@ -22,7 +22,7 @@ parse:
 
 libname_stmnt: LIBNAME macro_identifier 
     (('(' macro_identifier ')') |
-     (CONST)
+     CONST
     )
     ';';
 include_stmnt: INCLUDE (CONST | macro_identifier) ( '/' SOURCE2)?';';
