@@ -3,7 +3,7 @@ from antlr4 import InputStream, CommonTokenStream
 from antlr4.tree.Tree import TerminalNodeImpl
 
 class SASParser():
-    def __init__(self):
+    def __init__(self, srcfile):
         self.inputs_map = {
             'from_stmnt':
                 {'sqltable':
@@ -27,13 +27,10 @@ class SASParser():
                 'appendoutput':{'macro_identifier':'output'}}
         }
         
-        
-        os.system("antlr4 -Dlanguage=Python3 sas_parser.g4 -o tmp")
-        from tmp.sas_parserLexer import sas_parserLexer
-        from tmp.sas_parserParser import sas_parserParser
-        with open("input.sas") as f:
+        from .antlr4_artifacts.sas_parserLexer import sas_parserLexer
+        from .antlr4_artifacts.sas_parserParser import sas_parserParser
+        with open(srcfile) as f:
             self.lines = f.read()
-        # print(lines)
         self.lexer = sas_parserLexer(InputStream(self.lines))
         self.parser = sas_parserParser(CommonTokenStream(self.lexer))
         self.tree = self.parser.parse()
@@ -44,7 +41,10 @@ class SASParser():
 
     def get_code_steps(self):
         for child in self.tree.children:
-            self.code_steps.append((child.start.start, child.stop.stop, child.getText()))
+            if hasattr(child, "symbol"):
+                print(child.getText())
+            else:
+                self.code_steps.append((child.start.start, child.stop.stop, child.getText()))
 
     def traverse(self, tree, rule_names, rule_dict):
         
