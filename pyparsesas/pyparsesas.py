@@ -3,7 +3,7 @@ from antlr4 import InputStream, CommonTokenStream
 from antlr4.tree.Tree import TerminalNodeImpl
 
 class SASParser():
-    def __init__(self, srcfile):
+    def __init__(self, sascode):
         self.inputs_map = {
             'from_stmnt':
                 {'sqltable':
@@ -16,9 +16,11 @@ class SASParser():
             'data_stmnt':
                 {'datastep_dset':
                     'output'},
-            'set_stmnt': 
-                {'datastep_dset':
-                    'input'},
+            'ds_set':{
+                'datastep_dset':{
+                    'dotted_identifier':'input'
+                }
+            },
             'create_stmnt':
                 {'sqltable':
                     'output'},
@@ -26,11 +28,13 @@ class SASParser():
                 {'appendinput':{'macro_identifier':'input'},
                 'appendoutput':{'macro_identifier':'output'}}
         }
-        
+        this_folder = os.path.dirname(__file__)
+        grammar_file = os.path.join(this_folder, "sas_parser.g4")
+        pyparantlr4_artifacts = os.path.join(this_folder, "antlr4_artifacts")
+        os.system(f"antlr4 -Dlanguage=Python3 {grammar_file} -o {pyparantlr4_artifacts}")
         from .antlr4_artifacts.sas_parserLexer import sas_parserLexer
         from .antlr4_artifacts.sas_parserParser import sas_parserParser
-        with open(srcfile) as f:
-            self.lines = f.read()
+        self.lines = sascode
         self.lexer = sas_parserLexer(InputStream(self.lines))
         self.parser = sas_parserParser(CommonTokenStream(self.lexer))
         self.tree = self.parser.parse()
@@ -38,7 +42,7 @@ class SASParser():
         self.code_steps = []
         self.get_code_steps()
         self.traverse(self.tree, self.parser.ruleNames, self.inputs_map)
-
+        self.code_split = self.build_output_dict()
     def get_code_steps(self):
         for child in self.tree.children:
             if hasattr(child, "symbol"):
@@ -58,13 +62,18 @@ class SASParser():
                         self.traverse(child, rule_names, rule_matched)
                 else:
                     # print(rule_matched, '->', tree.getText(), tree.start.start, tree.start.stop, tree.stop.start, tree.stop.stop)
-                    self.parsed_steps.append((tree.start.start, tree.stop.stop, tree.getText()))
+                    self.parsed_steps.append((tree.start.start, tree.stop.stop, tree.getText(), rule_matched))
                     # print(self.lines[tree.start.start: tree.stop.stop+1])
             else:
                 for child in tree.children:
                     self.traverse(child, rule_names, rule_dict)
-            
-if __name__ == '__main__':
-    sasparser = SASParser()
-    x=1
-    pass
+    def build_output_dict(self):
+        result={"input":{}, "output":{}}
+        for start_point, stop_point, dataset_name, type_of_step in self.parsed_steps:
+            for step_start, step_stop, code in self.code_steps:
+                if start_point >= step_start and stop_point <= step_stop:
+                    if result[type_of_step].get(code):
+                        result[type_of_step][code].append(dataset_name)
+                    else:
+                        result[type_of_step][code] = [dataset_name]
+        return result

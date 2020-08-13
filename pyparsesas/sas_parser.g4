@@ -22,10 +22,10 @@ parse:
 
 libname_stmnt: LIBNAME macro_identifier 
     (('(' macro_identifier ')') |
-     CONST
+     string_const
     )
     ';';
-include_stmnt: INCLUDE (CONST | macro_identifier) ( '/' SOURCE2)?';';
+include_stmnt: INCLUDE (string_const | macro_identifier) ( '/' SOURCE2)?';';
 
 macrocall: '%' macro_identifier ('(' 
     (macro_string)* (',' (macro_string)*)*
@@ -35,14 +35,14 @@ macrocall: '%' macro_identifier ('('
 functioncallsql  :macro_identifier ('(' (funcargssql ) ')') ;
 
 funcargssql:
-    (dotted_identifier | STAR | functioncallsql | macrocall | CONST)? (',' (dotted_identifier | STAR | functioncallsql | macrocall | CONST))*
-    (','? macro_identifier '=' (dotted_identifier | STAR | functioncallsql | macrocall | CONST)?)* 
+    (dotted_identifier | STAR | functioncallsql | macrocall | string_const)? (',' (dotted_identifier | STAR | functioncallsql | macrocall | string_const))*
+    (','? macro_identifier '=' (dotted_identifier | STAR | functioncallsql | macrocall | string_const)?)* 
 ;
 functioncall : macro_identifier ('(' funcargs ')') ;
 
 funcargs:
     dotted_identifier? (',' (dotted_identifier| macrocall))*
-    (','? macro_identifier '=' (dotted_identifier | CONST | macrocall)?)* 
+    (','? macro_identifier '=' (dotted_identifier | string_const | macrocall)?)* 
 ;
 
 procappend:
@@ -82,7 +82,7 @@ ds_do_block:
 DO 
 (
     (
-      (Identifier) '=' (datastep_math) TO CONST (BY CONST)?)
+      (Identifier) '=' (datastep_math) TO string_const (BY string_const)?)
     | ((WHILE | UNTIL) '(' datastep_math ')' )
 )? ';'
  (ds_assign | ds_if_then_stmnt | ds_set | ds_merge | ds_do_block |macrocall)*
@@ -115,7 +115,7 @@ datastep_math:
     datastep_math_col (operators (datastep_math_col))*
 ;
 
-datastep_math_col: macro_identifier | CONST;
+datastep_math_col: macro_identifier | string_const;
 
 
 procsql:
@@ -156,7 +156,7 @@ sqlupdate_stmnt:
 update_stmnt: UPDATE TABLE sqltable;
 setsql_stmnt: SET sqlcolumns;
 
-sql_col_macro: (sqlcol_prefix | CONST | macrocall | functioncallsql | ('(' sqlselect_stmnt ')'));
+sql_col_macro: (sqlcol_prefix | string_const | macrocall | functioncallsql | ('(' sqlselect_stmnt ')'));
 sql_math: (sql_col_macro (operators sql_col_macro)*) ;
 
 sqlcolumns: (sql_math sqlalias?) (',' (sql_math sqlalias?))*;
@@ -175,7 +175,7 @@ dotted_identifier:
 macro_identifier: 
     (Identifier | macrocall | Macrovar);
 macro_string:
-    (macro_identifier | '.' | '&' | '(' | ')' | CONST | '=' | ':' | '/' | '\\' | '$' | '!');
+    (macro_identifier | '.' | '&' | '(' | ')' | string_const | '=' | ':' | '/' | '\\' | '$' | '!');
 macro_declaration: 
     Macro_begin macro_identifier ('(' funcargs ')')? ';'?';'
     parse
@@ -191,7 +191,7 @@ Macro_if datastep_math Macro_then (let_stmnt | put_stmnt | macro_do)
 
 macro_do:
 Macro_do
-    (Identifier '=' (macro_identifier | CONST) Macro_to macro_identifier)?
+    (Identifier '=' (macro_identifier | string_const) Macro_to macro_identifier)?
     
 ';'
 parse
@@ -272,9 +272,8 @@ LIBNAME: L I B N A M E;
 SOURCE2: S O U R C E '2';
 SINGLE_Q: '\'';
 DOUBLE_Q: '"';
-CONST: CHAR_LITERAL | NUM_LITERAL;
-CHAR_LITERAL: ANY_Q .+? ANY_Q; 
-ANY_Q: SINGLE_Q | DOUBLE_Q;
+string_const: (any_q macro_string* any_q) | NUM_LITERAL ;
+any_q: SINGLE_Q | DOUBLE_Q;
 NUM_LITERAL: [0-9]+ ('.' [0-9]+)* ;
 NOT_OP: '^' | 'not';
 COMPARISON_OP: 
