@@ -5,5 +5,5 @@ Project requires antlr4 and python 3.
 
 <h1> How to run </h1>
 
-    antlr4 -Dlanguage=Python3 sas_parser.g4
+    antlr4 -Dlanguage=Python3 sas_parser.g4 -o pyparsesas/antlr4_artifacts
     python ./pyparsesas
