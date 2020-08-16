@@ -139,7 +139,8 @@ sqlselect_stmnt:
 
 procsql_stmnt: PROC SQL NOPRINT? ';' ;
 create_stmnt: CREATE (TABLE | VIEW) sqltable AS;
-select_stmnt: SELECT sqlcolumns;
+select_stmnt: SELECT sqlcolumns into_stmnt?;
+into_stmnt: INTO (':' macro_identifier) (',' ':' macro_identifier)* ;
 from_stmnt: FROM sqltable (',' sqltable)*;
 join_stmnt: (LEFT | RIGHT)? JOIN sqltable ON sql_math;
 where_stmnt: WHERE sql_math;
@@ -232,6 +233,7 @@ Macro_then: '%' T H E N;
 VIEW: V I E W;
 CREATE: C R E A T E;
 SELECT: S E L E C T;
+INTO: I N T O ;
 FROM: F R O M;
 AS: A S;
 LEFT: L E F T;
