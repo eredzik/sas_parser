@@ -133,6 +133,7 @@ sqlselect_stmnt:
     where_stmnt?
     groupby_stmnt?
     having_stmnt?
+    order_stmnt?
     ';';
 
 
@@ -144,8 +145,9 @@ into_stmnt: INTO (':' macro_identifier) (',' ':' macro_identifier)* ;
 from_stmnt: FROM sqltable (',' sqltable)*;
 join_stmnt: (LEFT | RIGHT)? JOIN sqltable ON sql_math;
 where_stmnt: WHERE sql_math;
-groupby_stmnt: GROUPBY sqlcolumns;
+groupby_stmnt: GROUP BY sqlcolumns;
 having_stmnt: HAVING sql_math;
+order_stmnt: ORDER BY sql_math;
 
 sqlupdate_stmnt: 
     update_stmnt
@@ -250,8 +252,9 @@ RIGHT: R I G H T;
 JOIN: J O I N;
 ON: O N;
 WHERE: W H E R E;
-GROUPBY: G R O U P B Y;
+GROUP: G R O U P;
 HAVING: H A V I N G;
+ORDER: O R D E R ;
 NOPRINT: N O P R I N T;
 PROC: P R O C;
 SQL: S Q L;
