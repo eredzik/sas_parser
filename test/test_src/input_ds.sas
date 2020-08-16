@@ -26,4 +26,13 @@ macro_result3 = %call_some_macro(a, dupa.b, b=2, c=dupa.x);
 macro_result4 = %call_some_macro(a, dupa.b, b=%macro243);
 call_some_func = call_some_func(b);
 
+if a gt 5 then do;
+    if abc eq &a then b=1;
+    if abc lt %macrocall(foo, foo=bar) then abc=1;
+    x = abc ge 5;
+    x = abc >= 6;
+    x = abc le 7;
+    x = abc ne 8;
+    x = abc ^= 9;
+end;
 run;
