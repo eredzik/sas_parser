@@ -120,7 +120,7 @@ datastep_math_col: macro_identifier | string_const;
 
 procsql:
     procsql_stmnt
-    (sqlselect_stmnt | sqlupdate_stmnt)
+    (sqlselect_stmnt | sqlupdate_stmnt | sqlinsert_stmnt)
     
     (QUIT | RUN)
 ;
@@ -153,6 +153,13 @@ sqlupdate_stmnt:
     where_stmnt?
     ';'
     
+;
+
+sqlinsert_stmnt:
+    INSERT INTO sqltable
+    (('(' sqlcolumns ')'
+    VALUES
+    '(' sqlcolumns ')' ';') | sqlselect_stmnt)
 ;
 update_stmnt: UPDATE TABLE sqltable;
 setsql_stmnt: SET sqlcolumns;
@@ -236,6 +243,8 @@ SELECT: S E L E C T;
 INTO: I N T O ;
 FROM: F R O M;
 AS: A S;
+INSERT: I N S E R T;
+VALUES: V A L U E S;
 LEFT: L E F T;
 RIGHT: R I G H T;
 JOIN: J O I N;
