@@ -12,7 +12,7 @@ def test_parsing():
         "test/test_src/input_ds.sas":1,
         "test/test_src/input_macro.sas":2,
         "test/test_src/input_macro2.sas":2,
-        "test/test_src/test_include.sas":6,
+        "test/test_src/test_include.sas":9,
         "test/test_src/test_procsort.sas":1,
         "test/test_src/test_procsql.sas":3,
         "test/test_src/quoted_macro_ds.sas":1,

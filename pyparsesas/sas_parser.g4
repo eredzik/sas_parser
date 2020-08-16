@@ -25,13 +25,14 @@ libname_stmnt: LIBNAME macro_identifier
      string_const
     )
     ';';
-include_stmnt: INCLUDE (string_const | macro_identifier) ( '/' SOURCE2)?';';
+include_stmnt: INCLUDE (string_const | macro_identifier) ( '/' macroargs)?';';
 
 macrocall: '%' macro_identifier ('(' 
-    (macro_string)* (',' (macro_string)*)*
-    (','? macro_identifier '=' (macro_string)*?)* 
+    macroargs
  ')')?
  ';'?;
+ macroargs: (macro_string)* (',' (macro_string)*)*
+    (','? macro_identifier '=' (macro_string)*?)* ;
 functioncallsql  :macro_identifier ('(' (funcargssql ) ')') ;
 
 funcargssql:
@@ -241,7 +242,7 @@ Macro_local: '%' L O C A L ' ';
 Macro_then: '%' T H E N;
 VIEW: V I E W;
 CREATE: C R E A T E;
-SELECT: S E L E C T;
+SELECT: S E L E C T ;
 INTO: I N T O ;
 FROM: F R O M;
 AS: A S;
@@ -283,7 +284,6 @@ DUPOUT: D U P O U T;
 NODUPKEY: N O D U P K E Y;
 INCLUDE: '%' I N C L U D E;
 LIBNAME: L I B N A M E;
-SOURCE2: S O U R C E '2';
 SINGLE_Q: '\'';
 DOUBLE_Q: '"';
 string_const: (any_q macro_string* any_q) | NUM_LITERAL ;
