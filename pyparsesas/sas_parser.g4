@@ -186,7 +186,7 @@ dotted_identifier:
 macro_identifier: 
     (Identifier | macrocall | Macrovar);
 macro_string:
-    (macro_identifier | '.' | '&' | '(' | ')' | string_const | '=' | ':' | '/' | '\\' | '$' | '!');
+    (macro_identifier | '.' | '&'  | string_const | '=' | ':' | '/' | '\\' | '$' | '!');
 macro_declaration: 
     Macro_begin macro_identifier ('(' funcargs ')')? ';'?';'
     parse
@@ -197,12 +197,12 @@ macro_global: Macro_global macro_identifier+ ';' ;
 macro_local: Macro_local macro_identifier+ ';' ;
 macro_if:
 Macro_if datastep_math Macro_then (let_stmnt | put_stmnt | macro_do)
-(Macro_else (let_stmnt | put_stmnt | macro_do))*
+(Macro_else (let_stmnt | put_stmnt | macro_do | macro_if))*
 ;
 
 macro_do:
 Macro_do
-    (Identifier '=' (macro_identifier | string_const) Macro_to macro_identifier)?
+    (Identifier '=' (macro_identifier | NUM_LITERAL) Macro_to ( macro_identifier | NUM_LITERAL) (Macro_by (macro_identifier | NUM_LITERAL))?)?
     
 ';'
 parse
@@ -234,6 +234,7 @@ Macro_let: '%' L E T;
 Macro_put: '%' P U T;
 Macro_do: '%' D O;
 Macro_to: '%' T O;
+Macro_by: '%' B Y ;
 Macro_end: '%' E N D;
 Macro_if: '%' I F;
 Macro_else: '%' E L S E;
