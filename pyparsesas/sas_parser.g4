@@ -169,10 +169,10 @@ sqlinsert_stmnt:
 update_stmnt: UPDATE TABLE sqltable;
 setsql_stmnt: SET sqlcolumns;
 
-sql_col_macro: (sqlcol_prefix | string_const | macrocall | functioncallsql | ('(' sqlselect_stmnt ')'));
+sql_col_macro: (sqlcol_prefix | string_const | macrocall* | functioncallsql | ('(' sqlselect_stmnt ')'));
 sql_math
     : ('(' sql_math ')')
-    | (sql_col_macro (operators sql_col_macro)*) 
+    | (sql_col_macro (operators sql_col_macro)*)
 ;
 
 sqlcolumns: (sql_math sqlalias?) (',' (sql_math sqlalias?))*;
@@ -242,7 +242,6 @@ any_keyword
     | SELECT
     |INTO
     |FROM
-    |AS
     |INSERT
     |VALUES
     |LENGTH

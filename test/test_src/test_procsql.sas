@@ -17,3 +17,15 @@ group by 1, 2
 having sum(abc) = 1
 order by macrowhere, %col2, &macrovar, col3, %col5(abc)
 ;quit;
+
+
+proc sql;
+create table
+%gen_table_name(&abc) as 
+select * from 
+%gen_other(&abc, foo=bar)
+where
+%abc
+%def
+order by 1,2,3;
+quit;

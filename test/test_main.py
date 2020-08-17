@@ -28,7 +28,7 @@ def test_macro():
 
 def test_sql():
     test_paths = {
-        "test/test_src/test_procsql.sas":3,
+        "test/test_src/test_procsql.sas":4,
         "test/test_src/test_procsql_insert.sas":1,
     }
     for test_path, expected_length in test_paths.items():
