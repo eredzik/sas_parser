@@ -25,6 +25,7 @@ create table
 select * from 
 %gen_other(&abc, foo=bar)
 where
+1 or 2 and 
 %abc
 %def(%length(&macroabc.) gt 0, and (abc in (%gl_sth(&abcmacvar.))))
 %def(%length(&macroabc.) gt 0, and (abc not in (%gl_sth(&abcmacvar.))))
