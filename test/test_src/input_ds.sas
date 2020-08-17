@@ -1,5 +1,5 @@
 data x;
-length order 8 charvar $5 otherchar $20 &macrovar. &macrovar $5 &macrovar 3 from 8 %build(&other);
+length order 8 charvar %length $5 otherchar $20 &macrovar. &macrovar $5 &macrovar 3 from 8 %build(&other);
 assignment_const_num = 25432.55353;
 assignment_const_char = 'CHARSTH';
 assignment_const_char2 = "GAGA";
@@ -36,4 +36,7 @@ if a gt 5 then do;
     x = abc ne 8;
     x = abc ^= 9;
 end;
+ORDER = abc;
+LENGTH = coalesce(abc, 0);
+length abc $5;
 run;

@@ -73,7 +73,7 @@ ds_set: SET (datastep_dset datastep_dataset_options?)+ ';';
 ds_length: LENGTH ((macro_identifier | ds_allowed_keywords) ('$'? NUM_LITERAL)?)+ ';';
 ds_merge: MERGE (dotted_identifier datastep_dataset_options?)+ ';';
 ds_assign: 
-    Identifier '=' (
+    macro_identifier '=' (
     datastep_math | 
     macro_identifier | 
     functioncall |
@@ -193,7 +193,7 @@ dotted_identifier:
 
 
 macro_identifier: 
-    (Identifier | macrocall | Macrovar);
+    (Identifier | macrocall | Macrovar | any_keyword);
 macro_string:
     (macro_identifier | functioncall | '.' | '&' | string_const | '=' | ':' | '/' | '\\' | '$' | '!' | operators )+;
 macro_declaration: 
@@ -236,7 +236,44 @@ ds_allowed_keywords
     : ORDER
     | SELECT 
     | FROM;
-
+any_keyword
+    : VIEW
+    | CREATE
+    | SELECT
+    |INTO
+    |FROM
+    |AS
+    |INSERT
+    |VALUES
+    |LENGTH
+    |LEFT
+    |RIGHT
+    |JOIN
+    |ON
+    |WHERE
+    |GROUP
+    |HAVING
+    |ORDER
+    |NOPRINT
+    |PROC
+    |SQL
+    |RUN
+    |QUIT
+    |DATA
+    |SET
+    |MERGE
+    |RENAME
+    |UPDATE
+    |TABLE
+    |APPEND
+    |SORT
+    |OUT
+    |BASE
+    |IN
+    |DUPOUT
+    |NODUPKEY
+    |LIBNAME
+;
 COLON: ':';
 STAR: '*';
 MATH_OP: '/' | '+' | '-' | '**';
