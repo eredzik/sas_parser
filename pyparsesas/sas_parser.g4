@@ -194,8 +194,9 @@ dotted_identifier:
 
 macro_identifier: 
     (Identifier | macrocall | Macrovar | any_keyword);
-macro_string:
-    (macro_identifier | functioncall | '.' | '&' | string_const | '=' | ':' | '/' | '\\' | '$' | '!' | operators )+;
+macro_string
+    : '(' macro_string ')'
+    |(macro_identifier | functioncall | '.' | '&' | string_const | '=' | ':' | '/' | '\\' | '$' | '!' | operators )+;
 macro_declaration: 
     Macro_begin macro_identifier ('(' funcargs ')')? ';'?';'
     parse

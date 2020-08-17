@@ -26,6 +26,6 @@ select * from
 %gen_other(&abc, foo=bar)
 where
 %abc
-%def
+%def(%length(&macroabc.) gt 0, and (abc in (%gl_sth(&abcmacvar.))))
 order by 1,2,3;
 quit;
