@@ -6,7 +6,7 @@
 
     %put &=input_table;
     
-    %callsth( ą ę ć ń ż ł ó ź);
+    %callsth( ą ę ć ń ż ł ógdaggdsgsdgsgsdfdagtttdagadfsdfffffffffgadgdagsfdsgadgdaź);
 %end;
 
 %mend;
