@@ -385,7 +385,7 @@ fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
 WS : [ \t\r\n]+ -> skip ;
-Identifier : [a-zA-Z_] [a-zA-Z0-9_]*;
+Identifier : [a-zA-Z\u0090-\u0200_] [a-zA-Z0-9\u0090-\u0200_]*;
 COMMENT1: '/' '*' .*? '*' '/' -> channel(2);
 COMMENT2: '%' '*' .*? ';' -> channel(2);
 
