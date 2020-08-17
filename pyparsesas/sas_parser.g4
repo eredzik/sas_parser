@@ -31,8 +31,9 @@ macrocall: '%' macro_identifier ('('
     macroargs
  ')')?
  ';'?;
- macroargs: (macro_string)* (',' (macro_string)*)*
+ macroargs: (macro_string)? (',' (macro_string)*)*
     (','? macro_identifier '=' (macro_string)*?)* ;
+
 functioncallsql  :macro_identifier ('(' (funcargssql ) ')') ;
 
 funcargssql:
@@ -186,7 +187,7 @@ dotted_identifier:
 macro_identifier: 
     (Identifier | macrocall | Macrovar);
 macro_string:
-    (macro_identifier | '.' | '&'  | string_const | '=' | ':' | '/' | '\\' | '$' | '!');
+    (macro_identifier | '.' | '&' | string_const | '=' | ':' | '/' | '\\' | '$' | '!' | operators)+;
 macro_declaration: 
     Macro_begin macro_identifier ('(' funcargs ')')? ';'?';'
     parse
@@ -220,7 +221,7 @@ proc_out: OUT '=' dotted_identifier;
 proc_data: DATA  '=' dotted_identifier;
 
 operators: NOT_OP? (STAR | MATH_OP | LOGICAL_OP | COMPARISON_OP | '=') ; 
-let_stmnt: Macro_let macro_identifier '=' macro_string* ';';
+let_stmnt: Macro_let macro_identifier '=' macro_string ';'?;
 put_stmnt: Macro_put macro_string* ';';
 
 COLON: ':';
