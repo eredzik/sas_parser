@@ -11,7 +11,7 @@ from abc
 
 proc sql;
 select *
-from abc
+from (abc)
 where %macrowhre and macro2 =2 or abc >1
 group by 1, 2
 having sum(abc) = 1
