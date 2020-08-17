@@ -37,6 +37,6 @@ if a gt 5 then do;
     x = abc ^= 9;
 end;
 ORDER = abc;
-LENGTH = coalesce(abc, 0);
+LENGTH = coalesce(ORDER, 0);
 length abc $5;
 run;

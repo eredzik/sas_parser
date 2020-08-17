@@ -187,8 +187,8 @@ sqlalias: (AS? macro_identifier) ;
 
 
 dotted_identifier:
-    ((Identifier | macrocall | Macrovar | NUM_LITERAL) '.')? 
-    (Identifier | macrocall | Macrovar | NUM_LITERAL)
+    ((macro_identifier | macrocall | Macrovar | NUM_LITERAL) '.')? 
+    (macro_identifier | macrocall | Macrovar | NUM_LITERAL)
     ;
 
 
