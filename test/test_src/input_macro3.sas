@@ -6,7 +6,7 @@
 
     %put &=input_table;
     
-
+    %callsth( ą ę ć "ńżgd153adfł" ó ź, 5, foo=barówasgsd 462);
 %end;
 
 %mend;
