@@ -27,5 +27,7 @@ select * from
 where
 %abc
 %def(%length(&macroabc.) gt 0, and (abc in (%gl_sth(&abcmacvar.))))
+%def(%length(&macroabc.) gt 0, and (abc not in (%gl_sth(&abcmacvar.))))
+
 order by 1,2,3;
 quit;

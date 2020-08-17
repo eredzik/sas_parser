@@ -39,4 +39,5 @@ end;
 ORDER = abc;
 LENGTH = coalesce(ORDER, 0);
 length abc $5;
+in = abc in (zed, bed) or abc;
 run;

@@ -114,8 +114,10 @@ datastep_in:
     IN '=' macro_identifier
 ;
 
-datastep_math:
-    datastep_math_col (operators (datastep_math_col))*
+datastep_math
+    : '(' datastep_math ')'
+    | datastep_math_col IN '(' (datastep_math (',' datastep_math)*) ')' operators (datastep_math_col | datastep_math)*
+    | datastep_math_col (operators (datastep_math_col | datastep_math))*
 ;
 
 datastep_math_col: macro_identifier | string_const;
@@ -229,7 +231,7 @@ proc_base: BASE '=' dotted_identifier;
 proc_out: OUT '=' dotted_identifier;
 proc_data: DATA  '=' dotted_identifier;
 
-operators: NOT_OP? (STAR | MATH_OP | LOGICAL_OP | COMPARISON_OP | '=') ; 
+operators: NOT_OP? (STAR | MATH_OP | LOGICAL_OP | COMPARISON_OP | '=' | NOT_OP | IN) ; 
 let_stmnt: Macro_let macro_identifier '=' macro_string ';'?;
 put_stmnt: Macro_put macro_string* ';';
 
