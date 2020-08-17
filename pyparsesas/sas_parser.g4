@@ -149,7 +149,7 @@ join_stmnt: (LEFT | RIGHT)? JOIN sqltable ON sql_math;
 where_stmnt: WHERE sql_math;
 groupby_stmnt: GROUP BY sqlcolumns;
 having_stmnt: HAVING sql_math;
-order_stmnt: ORDER BY sql_math;
+order_stmnt: ORDER BY sql_math (',' sql_math)*;
 
 sqlupdate_stmnt: 
     update_stmnt
