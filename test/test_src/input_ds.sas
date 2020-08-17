@@ -1,4 +1,5 @@
 data x;
+length order 8 charvar $5 otherchar $20 &macrovar. &macrovar $5 &macrovar 3 from 8 %build(&other);
 assignment_const_num = 25432.55353;
 assignment_const_char = 'CHARSTH';
 assignment_const_char2 = "GAGA";

@@ -70,6 +70,7 @@ datastep:
 data_stmnt: DATA datastep_dset ('/' datastep_options)? ';';
 datastep_options: VIEW '=' Identifier;
 ds_set: SET (datastep_dset datastep_dataset_options?)+ ';';
+ds_length: LENGTH ((macro_identifier | ds_allowed_keywords) ('$'? NUM_LITERAL)?)+ ';';
 ds_merge: MERGE (dotted_identifier datastep_dataset_options?)+ ';';
 ds_assign: 
     Identifier '=' (
@@ -78,7 +79,7 @@ ds_assign:
     functioncall |
     macrocall
     ) ';';
-ds_stmnts: (ds_assign | ds_if_then_stmnt | ds_set | ds_merge | ds_do_block |macrocall)*;
+ds_stmnts: (ds_assign | ds_if_then_stmnt | ds_set | ds_merge | ds_do_block |macrocall | ds_length ';'*)*;
 ds_if_then_stmnt: IF datastep_math THEN (ds_assign | ds_if_then_stmnt | ds_set | ds_merge | ds_do_block |macrocall) ;
 ds_do_block: 
 DO 
@@ -123,7 +124,7 @@ datastep_math_col: macro_identifier | string_const;
 procsql:
     procsql_stmnt
     (sqlselect_stmnt | sqlupdate_stmnt | sqlinsert_stmnt)
-    
+    ';'*
     (QUIT | RUN)
 ;
 
@@ -231,6 +232,11 @@ operators: NOT_OP? (STAR | MATH_OP | LOGICAL_OP | COMPARISON_OP | '=') ;
 let_stmnt: Macro_let macro_identifier '=' macro_string ';'?;
 put_stmnt: Macro_put macro_string* ';';
 
+ds_allowed_keywords
+    : ORDER
+    | SELECT 
+    | FROM;
+
 COLON: ':';
 STAR: '*';
 MATH_OP: '/' | '+' | '-' | '**';
@@ -257,6 +263,7 @@ FROM: F R O M;
 AS: A S;
 INSERT: I N S E R T;
 VALUES: V A L U E S;
+LENGTH: L E N G T H;
 LEFT: L E F T;
 RIGHT: R I G H T;
 JOIN: J O I N;
