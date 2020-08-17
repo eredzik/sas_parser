@@ -43,8 +43,8 @@ funcargssql:
 functioncall : macro_identifier ('(' funcargs ')') ;
 
 funcargs:
-    dotted_identifier? (',' (dotted_identifier| macrocall))*
-    (','? macro_identifier '=' (dotted_identifier | string_const | macrocall)?)* 
+    dotted_identifier? (',' (macro_string))*
+    (','? macro_identifier '=' (macro_string)?)* 
 ;
 
 procappend:
@@ -179,15 +179,15 @@ sqlalias: (AS? macro_identifier) ;
 
 
 dotted_identifier:
-    ((Identifier | macrocall | Macrovar) '.')? 
-    (Identifier | macrocall | Macrovar)
+    ((Identifier | macrocall | Macrovar | NUM_LITERAL) '.')? 
+    (Identifier | macrocall | Macrovar | NUM_LITERAL)
     ;
 
 
 macro_identifier: 
     (Identifier | macrocall | Macrovar);
 macro_string:
-    (macro_identifier | '.' | '&' | string_const | '=' | ':' | '/' | '\\' | '$' | '!' | operators)+;
+    (macro_identifier | functioncall | '.' | '&' | string_const | '=' | ':' | '/' | '\\' | '$' | '!' | operators )+;
 macro_declaration: 
     Macro_begin macro_identifier ('(' funcargs ')')? ';'?';'
     parse

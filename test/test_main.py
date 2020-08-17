@@ -21,7 +21,7 @@ def test_macro():
         "test/test_src/input_macro.sas":2,
         "test/test_src/input_macro2.sas":2,
         "test/test_src/input_macro3.sas":1,
-        "test/test_src/macro_let_recursive.sas":5,
+        "test/test_src/macro_let_recursive.sas":6,
     }
     for test_path, expected_length in test_paths.items():
         run_parsing(test_path, expected_length)
